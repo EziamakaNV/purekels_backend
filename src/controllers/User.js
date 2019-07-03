@@ -21,6 +21,7 @@ class UserController {
         lastName,
         password,
         address,
+        phoneNumber,
       } = req.body;
 
       // Remove empty spaces from the email and set to lowercase
@@ -33,6 +34,7 @@ class UserController {
         email,
         password,
         address,
+        phoneNumber,
       };
 
       const { error } = Validation.signUpValidation(validationObject);
@@ -46,9 +48,15 @@ class UserController {
           res.status(400).json({ status: 400, error: 'Email already exists', success: false });
         } else { // Store user data
           // Hash password
-          const saltRounds = 10;
-          const hashedPassword = await bcrypt.hash(password, saltRounds);
-          const userObject = { firstName, lastName, email, password: hashedPassword, address, isAdmin: false };
+          const hashedPassword = await bcrypt.hash(password, Number(process.env.SALT_ROUNDS));
+          const userObject = {
+            firstName,
+            lastName,
+            email,
+            phoneNumber,
+            password: hashedPassword,
+            address,
+            isAdmin: false };
           const newUser = await UserModel.createUser(userObject);
           // Generate jwt
           const token = jwt.sign({ id: newUser.id, email }, process.env.JWT_SECRET, { expiresIn: '8760h' });
@@ -58,7 +66,7 @@ class UserController {
           // Final response
           res.status(200).json({
             status: 200,
-            data: { token, id: newUser.id, firstName, lastName, email, hashedPassword },
+            data: { token, ...newUser },
             success: true,
           });
         }
@@ -93,7 +101,14 @@ class UserController {
             res.cookie('user', JSON.stringify({ firstName: user.firstName, lastName: user.lastName }), { maxAge: 31540000000 });
             res.status(200).json({
               status: 200,
-              data: { token, id: user.id, first_name: user.firstName, last_name: user.lastName, email } });
+              data: {
+                token,
+                id: user.id,
+                first_name: user.firstName,
+                last_name: user.lastName,
+                email,
+              },
+            });
           } else {
             res.status(401).json({ status: 401, error: 'The Email/Paswword is incorrect' });
           }
