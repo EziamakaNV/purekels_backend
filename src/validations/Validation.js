@@ -9,6 +9,7 @@ class Validation {
       email: Joi.string().email().required(),
       password: Joi.string().min(6).max(20).required(),
       address: Joi.string().min(15).max(50).required(),
+      phoneNumber: Joi.string().regex(/^[0]\d{10}$/).required(),
     };
     return Joi.validate(validationObject, schema);
   }
