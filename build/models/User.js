@@ -5,49 +5,44 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 
+require("core-js/modules/es6.symbol");
+
+require("core-js/modules/web.dom.iterable");
+
 var _index = _interopRequireDefault(require("./Db/index"));
+
+var _mongoUtil = _interopRequireDefault(require("../mongoUtil"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-/* eslint-disable linebreak-style */
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+const db = _mongoUtil.default.getDb();
+
+const usersCollection = db.collection('users'); // let usersCollection;
+// (async () => {
+//   const db = await database.catch(err => console.log(err));
+//   usersCollection = db.collection('users');
+// })();
+
 class UserModel {
   static findUser(email) {
-    return new Promise((resolve, reject) => {
-      const text = 'SELECT * FROM users where email = $1';
-
-      _index.default.query(text, [email]).then(result => {
-        if (result.rows.length === 0) {
-          resolve(false);
-        } else {
-          resolve(result.rows[0]);
-        }
-      }).catch(err => reject(err));
+    return new Promise(async (resolve, reject) => {
+      usersCollection.findOne({
+        email
+      }).then(result => resolve(result)).catch(err => reject(err));
     });
   }
 
   static createUser(user) {
-    return new Promise((resolve, reject) => {
-      const text = 'INSERT INTO users(email, first_name, last_name, phone_number, password, address, is_admin) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING *';
-      const values = [user.email, user.firstName, user.lastName, user.phoneNumber, user.password, user.address, user.isAdmin];
-
-      _index.default.query(text, values).then(result => resolve(result.rows[0])).catch(err => reject(err));
+    return new Promise(async (resolve, reject) => {
+      usersCollection.insertOne(_objectSpread({}, user)).then(result => resolve(result.ops[0])).catch(err => reject(err));
     });
   }
 
-  static isAdmin(userId) {
-    return new Promise((resolve, reject) => {
-      const query = 'SELECT FROM users WHERE id = $1 AND is_admin = $2';
-      const values = [userId, true];
-
-      _index.default.query(query, values).then(result => {
-        if (result.rows.length === 0) {
-          resolve(false);
-        } else {
-          resolve(result.rows[0]);
-        }
-      }).catch(err => reject(err));
-    });
-  }
+  static isAdmin(userId) {}
 
 }
 

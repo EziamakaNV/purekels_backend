@@ -1,23 +1,14 @@
 /* eslint-disable linebreak-style */
-import { Pool } from 'pg';
 import dotenv from 'dotenv';
+import { MongoClient } from 'mongodb';
+import assert from 'assert';
 
 dotenv.config();
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
+export default new Promise(async (resolve, reject) => {
+  const client = await MongoClient.connect(process.env.DATABASE_URI, { poolSize: 5, useNewUrlParser: true })
+    .catch(err => reject(err));
+  if (client) {
+    return resolve(client.db());
+  }
 });
-
-export default {
-  query(text, params) {
-    return new Promise((resolve, reject) => {
-      pool.query(text, params)
-        .then((res) => {
-          resolve(res);
-        })
-        .catch((err) => {
-          reject(err);
-        });
-    });
-  },
-};

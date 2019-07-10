@@ -16,9 +16,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
-/*
-  API V2
-*/
 app.use('/api/v1/auth', userRoute);
 // Not Found Handler
 app.use((req, res) => { res.status(404).send('Not Found!'); });
