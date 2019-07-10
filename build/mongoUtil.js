@@ -23,17 +23,15 @@ _dotenv.default.config(); // export default new Promise(async (resolve, reject) 
 
 let db;
 var _default = {
-  connectToServer: async callback => {
-    try {
-      const client = await _mongodb.MongoClient.connect(process.env.DATABASE_URI, {
-        poolSize: 5,
-        useNewUrlParser: true
-      });
+  connectToServer: callback => {
+    _mongodb.MongoClient.connect(process.env.DATABASE_URI, {
+      poolSize: 5,
+      useNewUrlParser: true
+    }, (err, client) => {
+      console.log(client);
       db = client.db();
-      return callback(null);
-    } catch (error) {
-      return callback(error);
-    }
+      return callback(err);
+    });
   },
   getDb: () => db
 };

@@ -71,8 +71,7 @@ class UserController {
         } else {
           // Store user data
           // Hash password
-          console.log(typeof process.env.SALT_ROUNDS);
-          const hashedPassword = await _bcrypt.default.hash(password, process.env.SALT_ROUNDS);
+          const hashedPassword = await _bcrypt.default.hash(password, Number(process.env.SALT_ROUNDS));
           const userObject = {
             firstName,
             lastName,
