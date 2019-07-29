@@ -2,6 +2,7 @@
 /* eslint-disable no-console */
 /* eslint-disable linebreak-style */
 import database from './Db/index';
+import logger from '../config/winston';
 
 let cartsCollection;
 (async () => {
@@ -9,7 +10,7 @@ let cartsCollection;
     const db = await database.catch((err) => { throw new Error(err); });
     cartsCollection = db.collection('carts');
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     cartsCollection = false;
   }
 })();

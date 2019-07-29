@@ -4,9 +4,12 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
+import morgan from 'morgan';
 import userRoute from './routes/user';
 import cartRoute from './routes/cart';
 import { dbEmitter } from './models/Db/index';
+import winston from './config/winston';
+import logger from './config/winston';
 
 require('dotenv').config();
 
@@ -17,6 +20,7 @@ const PORT = process.env.PORT || 5000;
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(morgan('combined', { stream: winston.stream }));
 app.use(express.static('public'));
 
 app.use('/api/v1/auth', userRoute);
@@ -28,13 +32,13 @@ app.use((req, res) => { res.status(404).send('Not Found!'); });
 dbEmitter.on('db_connected', () => {
   if (process.env.NODE_ENV !== 'test') {
     // eslint-disable-next-line no-console
-    console.log('Db Connected, Emitter worked!');
-    app.listen(PORT, () => console.log(`App listening on port ${PORT}`));
+    winston.info('Db Connected, Emitter worked!');
+    app.listen(PORT, () => winston.info(`App listening on port ${PORT}`));
   }
 });
 
 dbEmitter.on('error', (err) => {
-  console.log(`Error connecting to db - ${err}`);
+  logger.info(`Error connecting to db - ${err}`);
 });
 
 export default app;

@@ -1,0 +1,5 @@
+{"message":"Db Connected, Emitter worked!","level":"info"}
+{"message":"App listening on port 5000","level":"info"}
+{"message":"::1 - - [29/Jul/2019:11:39:54 +0000] \"POST /api/v1/auth/signup HTTP/1.1\" 200 521 \"-\" \"PostmanRuntime/7.15.2\"\n","level":"info"}
+{"message":{"id":"5d3edb09e31d34222c6da6ae","email":"top@work.com","isAdmin":false},"level":"info"}
+{"message":"::1 - - [29/Jul/2019:11:42:02 +0000] \"POST /api/v1/cart/1 HTTP/1.1\" 200 147 \"-\" \"PostmanRuntime/7.15.2\"\n","level":"info"}
