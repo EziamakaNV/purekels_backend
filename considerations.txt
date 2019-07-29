@@ -1,0 +1,39 @@
+products
+{
+    id,
+    name,
+    price,
+}
+
+carts
+{
+    id,
+    owner: userId,
+    items: [
+        {
+            productId,
+            name,
+            quantity,
+            price,
+        }
+    ],
+    totalPrice
+}
+
+orders
+{
+    id,
+    owner,
+    items: [
+        {
+            id,
+            name,
+            price,
+            quantity
+        }
+    ],
+    deliveryAddress,
+    telephone,
+    deliveryInstructions,
+
+}

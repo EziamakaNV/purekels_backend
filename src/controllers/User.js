@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable linebreak-style */
 /* eslint-disable object-curly-newline */
 /* eslint-disable linebreak-style */
@@ -7,7 +8,7 @@ import bcrypt from 'bcrypt';
 
 import Validation from '../validations/Validation';
 
-import response from '../responses/Response';
+import response from '../response';
 
 import UserModel from '../models/User';
 
@@ -59,7 +60,7 @@ class UserController {
             isAdmin: false };
           const newUser = await UserModel.createUser(userObject);
           // Generate jwt
-          const token = jwt.sign({ id: newUser.id, email }, process.env.JWT_SECRET, { expiresIn: '8760h' });
+          const token = jwt.sign({ id: newUser._id, email, isAdmin: false }, process.env.JWT_SECRET, { expiresIn: '8760h' });
           // Set cookie header
           res.cookie('jwt', token, { maxAge: 31540000000, httpOnly: true });
           res.cookie('user', JSON.stringify({ firstName, lastName }), { maxAge: 31540000000 });
@@ -93,7 +94,7 @@ class UserController {
         // Compare passwords
           const match = await bcrypt.compare(password, user.password);
           if (match) { // (same-boolean) If the passwords match
-            const token = jwt.sign({ id: user.id, email }, process.env.JWT_SECRET, { expiresIn: '8760h' });
+            const token = jwt.sign({ id: user._id, email, isAdmin: user.isAdmin }, process.env.JWT_SECRET, { expiresIn: '8760h' });
             res.cookie('jwt', token, { maxAge: 31540000000, httpOnly: true });
             // httpOnly not set because
             // I want to be able to read the cookie
@@ -103,7 +104,7 @@ class UserController {
               status: 200,
               data: {
                 token,
-                id: user.id,
+                id: user._id,
                 first_name: user.firstName,
                 last_name: user.lastName,
                 email,
