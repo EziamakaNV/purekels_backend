@@ -2,6 +2,7 @@
 import Validation from '../validations/Validation';
 import response from '../response';
 import CartModel from '../models/Cart';
+import logger from '../config/winston';
 
 class CartController {
   static async addToCart(req, res) {
@@ -10,7 +11,7 @@ class CartController {
     // if the product is in the cart increment the quantity by 1,
     // if the product is not in the cart, add the item and increment by one;
     try {
-      console.log(req.user);
+      logger.info(req.user);
       const { productId } = req.params;
       const { error } = Validation.addToCart({ productId });
 
@@ -20,7 +21,7 @@ class CartController {
         // Check for Cart;
         const cart = await CartModel.findCart(req.user.id);
         if (cart) {
-          console.log(cart);
+          logger.info(cart);
           // Increment the product
           // If the product is not there it creates the files and sets it to 1
           const updatedCart = await CartModel.incrementProduct(req.user.id, productId);

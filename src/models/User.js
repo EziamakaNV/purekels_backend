@@ -2,6 +2,7 @@
 /* eslint-disable no-console */
 /* eslint-disable linebreak-style */
 import database from './Db/index';
+import logger from '../config/winston';
 
 let usersCollection;
 (async () => {
@@ -9,7 +10,7 @@ let usersCollection;
     const db = await database.catch((err) => { throw new Error(err); });
     usersCollection = db.collection('users');
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     usersCollection = false;
   }
 })();
