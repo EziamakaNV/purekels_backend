@@ -17,7 +17,7 @@ var _bcrypt = _interopRequireDefault(require("bcrypt"));
 
 var _Validation = _interopRequireDefault(require("../validations/Validation"));
 
-var _Response = _interopRequireDefault(require("../responses/Response"));
+var _response = _interopRequireDefault(require("../response"));
 
 var _User = _interopRequireDefault(require("../models/User"));
 
@@ -57,7 +57,7 @@ class UserController {
       } = _Validation.default.signUpValidation(validationObject);
 
       if (error) {
-        (0, _Response.default)(res, 400, error);
+        (0, _response.default)(res, 400, error);
       } else {
         // Check if the email exists on record
         const userExists = await _User.default.findUser(email);
@@ -84,8 +84,9 @@ class UserController {
           const newUser = await _User.default.createUser(userObject); // Generate jwt
 
           const token = _jsonwebtoken.default.sign({
-            id: newUser.id,
-            email
+            id: newUser._id,
+            email,
+            isAdmin: false
           }, process.env.JWT_SECRET, {
             expiresIn: '8760h'
           }); // Set cookie header
@@ -112,7 +113,7 @@ class UserController {
         }
       }
     } catch (error) {
-      (0, _Response.default)(res, 500, error);
+      (0, _response.default)(res, 500, error);
     }
   }
 
@@ -147,8 +148,9 @@ class UserController {
           if (match) {
             // (same-boolean) If the passwords match
             const token = _jsonwebtoken.default.sign({
-              id: user.id,
-              email
+              id: user._id,
+              email,
+              isAdmin: user.isAdmin
             }, process.env.JWT_SECRET, {
               expiresIn: '8760h'
             });
@@ -170,7 +172,7 @@ class UserController {
               status: 200,
               data: {
                 token,
-                id: user.id,
+                id: user._id,
                 first_name: user.firstName,
                 last_name: user.lastName,
                 email
@@ -190,7 +192,7 @@ class UserController {
         }
       }
     } catch (error) {
-      (0, _Response.default)(res, 500, error);
+      (0, _response.default)(res, 500, error);
     }
   }
 

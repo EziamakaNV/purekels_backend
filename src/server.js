@@ -9,13 +9,13 @@ import userRoute from './routes/user';
 import cartRoute from './routes/cart';
 import { dbEmitter } from './models/Db/index';
 import winston from './config/winston';
-import logger from './config/winston';
 
 require('dotenv').config();
 
 const app = express();
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 8080;
+process.title = 'purelykels';
 
 app.use(cookieParser());
 app.use(bodyParser.json());
@@ -30,7 +30,7 @@ app.use((req, res) => { res.status(404).send('Not Found!'); });
 
 // start the server only if the db is connected
 dbEmitter.on('db_connected', () => {
-  if (process.env.NODE_ENV !== 'test') {
+  if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'development') {
     // eslint-disable-next-line no-console
     winston.info('Db Connected, Emitter worked!');
     app.listen(PORT, () => winston.info(`App listening on port ${PORT}`));
@@ -38,7 +38,7 @@ dbEmitter.on('db_connected', () => {
 });
 
 dbEmitter.on('error', (err) => {
-  logger.info(`Error connecting to db - ${err}`);
+  winston.info(`Error connecting to db - ${err}`);
 });
 
 export default app;
