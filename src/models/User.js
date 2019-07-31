@@ -4,11 +4,13 @@
 import database from './Db/index';
 import logger from '../config/winston';
 
+const users = process.env.NODE_ENV === 'production' ? 'users' : 'testUsers';
+
 let usersCollection;
 (async () => {
   try {
     const db = await database.catch((err) => { throw new Error(err); });
-    usersCollection = db.collection('users');
+    usersCollection = db.collection(users);
   } catch (error) {
     logger.error(error);
     usersCollection = false;

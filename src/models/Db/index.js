@@ -6,7 +6,7 @@ import EventEmitter from 'events';
 
 class MyEmitter extends EventEmitter {}
 
-export const dbEmitter =  new MyEmitter();
+export const dbEmitter = new MyEmitter();
 dotenv.config();
 
 export default new Promise(async (resolve, reject) => {
@@ -16,7 +16,9 @@ export default new Promise(async (resolve, reject) => {
       reject(err);
     });
   if (client) {
-    dbEmitter.emit('db_connected');
+    if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'development') {
+      dbEmitter.emit('db_connected');
+    }
     return resolve(client.db());
   }
 });
