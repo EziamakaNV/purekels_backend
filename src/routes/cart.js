@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.post('/:productId', Authentication.verifyToken, CartController.addToCart);
 
-// router.get('/', Authentication.verifyToken, CartController.getCart);
+router.get('/', Authentication.verifyToken, CartController.getCart);
 
 // router.patch('/:productId/quantity', Authentication.verifyToken, CartController.updateQuantity);
 

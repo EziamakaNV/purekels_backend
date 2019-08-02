@@ -23,8 +23,6 @@ class CartController {
     // if the product is in the cart increment the quantity by 1,
     // if the product is not in the cart, add the item and increment by one;
     try {
-      _winston.default.info(req.user);
-
       const {
         productId
       } = req.params;
@@ -42,10 +40,8 @@ class CartController {
         const cart = await _Cart.default.findCart(req.user.id);
 
         if (cart) {
-          _winston.default.info(cart); // Increment the product
+          // Increment the product
           // If the product is not there it creates the files and sets it to 1
-
-
           const updatedCart = await _Cart.default.incrementProduct(req.user.id, productId);
           (0, _response.default)(res, 200, updatedCart);
         } else {
@@ -55,6 +51,23 @@ class CartController {
         }
       }
     } catch (error) {
+      (0, _response.default)(res, 500, error);
+    }
+  }
+
+  static async getCart(req, res) {
+    try {
+      // Check if the user has a cart
+      const cart = await _Cart.default.findCart(req.user.id);
+
+      if (cart) {
+        (0, _response.default)(res, 200, cart);
+      } else {
+        (0, _response.default)(res, 401, 'Nothing in cart');
+      }
+    } catch (error) {
+      _winston.default.error(error);
+
       (0, _response.default)(res, 500, error);
     }
   }
