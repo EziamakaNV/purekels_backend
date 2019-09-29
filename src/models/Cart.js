@@ -3,6 +3,7 @@
 /* eslint-disable linebreak-style */
 import database from './Db/index';
 import logger from '../config/winston';
+import response from '../response';
 
 const carts = process.env.NODE_ENV === 'production' ? 'carts' : 'testCarts';
 
@@ -32,7 +33,7 @@ class CartModel {
     });
   }
 
-  static incrementProduct(userId, productId) {
+  static incrementOrDecrementProduct(userId, productId, incrementOrDecrement) {
     return new Promise(async (resolve, reject) => {
       if (cartsCollection === false) {
         return reject(new Error('Db Connection failed'));
@@ -40,8 +41,14 @@ class CartModel {
       try {
         // The $inc operator accepts positive and negative values.
         // If the field does not exist, $inc creates the field and sets the field to the specified value
-        const result = await cartsCollection.findOneAndUpdate({ owner: userId, 'items.productId': productId },
-          { $inc: { 'items.$.quantity': 1 } }, { returnOriginal: false });
+        const increaseOrDecrease = (incrementOrDecrement === 'increment') ? 1 : -1;
+        const cart = await this.findCart(userId);
+        const cartItem = cart.items.find(item => item.productId === productId);
+        if (cartItem.quantity === 0 && increaseOrDecrease !== 1) { // Dont decrement when quantity equals 0
+          return resolve(cart);
+        }
+        const result = await cartsCollection.findOneAndUpdate({ owner: userId, 'items.productId': productId, 'items.quantity': { $gte: 0 } },
+          { $inc: { 'items.$.quantity': increaseOrDecrease } }, { returnOriginal: false });
         return resolve(result.value);
       } catch (error) {
         return reject(error);
