@@ -22,7 +22,7 @@ const address = _joi.default.string().min(15).max(50).required();
 
 const phoneNumber = _joi.default.string().regex(/^[0]\d{10}$/).required();
 
-const productId = _joi.default.string().required();
+const productId = _joi.default.number().integer().required();
 
 class Validation {
   static signUpValidation(validationObject) {

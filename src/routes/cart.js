@@ -5,11 +5,11 @@ import CartController from '../controllers/Cart';
 
 const router = express.Router();
 
-router.post('/:productId', Authentication.verifyToken, CartController.addToCart);
+router.post('/:productId', Authentication.verifyToken, CartController.addOrDeductFromCart);
 
 router.get('/', Authentication.verifyToken, CartController.getCart);
 
-// router.patch('/:productId/quantity', Authentication.verifyToken, CartController.updateQuantity);
+router.patch('/:productId/decrement', Authentication.verifyToken, CartController.addOrDeductFromCart);
 
 // router.delete('/:productId', Authentication.verifyToken, CartController.deleteItem);
 

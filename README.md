@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/EziamakaNV/purekels_backend.svg?branch=develop)](https://travis-ci.org/EziamakaNV/purekels_backend) [![Coverage Status](https://coveralls.io/repos/github/EziamakaNV/purekels_backend/badge.svg?branch=develop)](https://coveralls.io/github/EziamakaNV/purekels_backend?branch=develop)
 
 ### Project Overview
-Auto Mart is an online market place for automobiles of diverse makes, model or body type. With Auto Mart , users can sell their cars or buy from trusted dealerships or private sellers
+The backend Repo for Purely Kels.
 
 ### Technology Stack Used
 - Coveralls

@@ -23,9 +23,7 @@ class CartController {
     // if the product is in the cart increment the quantity by 1,
     // if the product is not in the cart, add the item and increment by one;
     try {
-      const {
-        productId
-      } = req.params;
+      const productId = Number(req.params.productId);
 
       const {
         error
@@ -42,7 +40,7 @@ class CartController {
         if (cart) {
           // Increment the product
           // If the product is not there it creates the files and sets it to 1
-          const updatedCart = await _Cart.default.incrementProduct(req.user.id, productId);
+          const updatedCart = await _Cart.default.incrementOrDecrementProduct(req.user.id, productId, 'increment');
           (0, _response.default)(res, 200, updatedCart);
         } else {
           // Insert or create new cart and add the product setting the value to one
@@ -63,7 +61,9 @@ class CartController {
       if (cart) {
         (0, _response.default)(res, 200, cart);
       } else {
-        (0, _response.default)(res, 401, 'Nothing in cart');
+        (0, _response.default)(res, 200, {
+          message: 'Nothing in cart'
+        });
       }
     } catch (error) {
       _winston.default.error(error);

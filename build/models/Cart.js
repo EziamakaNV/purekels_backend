@@ -50,7 +50,7 @@ class CartModel {
     });
   }
 
-  static incrementProduct(userId, productId) {
+  static incrementOrDecrementProduct(userId, productId, incrementOrDecrement) {
     return new Promise(async (resolve, reject) => {
       if (cartsCollection === false) {
         return reject(new Error('Db Connection failed'));
@@ -59,12 +59,16 @@ class CartModel {
       try {
         // The $inc operator accepts positive and negative values.
         // If the field does not exist, $inc creates the field and sets the field to the specified value
+        const increaseOrDecrease = incrementOrDecrement === 'increment' ? 1 : -1;
         const result = await cartsCollection.findOneAndUpdate({
           owner: userId,
-          'items.productId': productId
+          'items.productId': productId,
+          'items.quantity': {
+            $gt: 0
+          }
         }, {
           $inc: {
-            'items.$.quantity': 1
+            'items.$.quantity': increaseOrDecrease
           }
         }, {
           returnOriginal: false

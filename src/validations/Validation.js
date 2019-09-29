@@ -7,7 +7,7 @@ const email = Joi.string().email().required();
 const password = Joi.string().min(6).max(20).required();
 const address = Joi.string().min(15).max(50).required();
 const phoneNumber = Joi.string().regex(/^[0]\d{10}$/).required();
-const productId = Joi.string().required();
+const productId = Joi.number().integer().required();
 
 class Validation {
   static signUpValidation(validationObject) {
