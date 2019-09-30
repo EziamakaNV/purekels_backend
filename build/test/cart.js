@@ -116,14 +116,6 @@ describe('GET /api/v1/cart 1st part', function () {
   });
 });
 describe('GET /api/v1/cart 2nd part', function () {
-  // before(function (done) {
-  //   cartsCollection.findOneAndDelete({ owner: testUserId })
-  //     .then(function () { done(); })
-  //     .catch(function (err) {
-  //       logger.error(`Mocha Test ${err}`);
-  //       done();
-  //     });
-  // });
   deleteCartBefore();
   describe('When the user is logged in', function () {
     it('Should return a 200 and message "Nothing in cart" if no cart is found', function (done) {
@@ -154,7 +146,6 @@ describe('POST /api/v1/cart/:productId', function () {
         expect(res.body).to.haveOwnProperty('data');
         expect(res.body.data).to.be.a('object');
         const cartItem = res.body.data.items.find(item => item.productId === 1);
-        console.log(res.body);
         expect(cartItem.productId).to.equal(1);
         done();
       });

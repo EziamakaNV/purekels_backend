@@ -17,7 +17,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /* eslint-disable linebreak-style */
 class CartController {
-  static async addToCart(req, res) {
+  static async addOrDeductFromCart(req, res) {
+    // Check if the product exists
     // Check if the user has a cart
     // if true, check if the roduct is already in the cart
     // if the product is in the cart increment the quantity by 1,
@@ -40,7 +41,9 @@ class CartController {
         if (cart) {
           // Increment the product
           // If the product is not there it creates the files and sets it to 1
-          const updatedCart = await _Cart.default.incrementOrDecrementProduct(req.user.id, productId, 'increment');
+          console.log(req.path);
+          const addOrReduce = /decrement/i.test(req.path) ? 'decrement' : 'increment';
+          const updatedCart = await _Cart.default.incrementOrDecrementProduct(req.user.id, productId, addOrReduce);
           (0, _response.default)(res, 200, updatedCart);
         } else {
           // Insert or create new cart and add the product setting the value to one

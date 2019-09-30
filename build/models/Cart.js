@@ -9,6 +9,8 @@ var _index = _interopRequireDefault(require("./Db/index"));
 
 var _winston = _interopRequireDefault(require("../config/winston"));
 
+var _response = _interopRequireDefault(require("../response"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /* eslint-disable linebreak-style */
@@ -60,11 +62,19 @@ class CartModel {
         // The $inc operator accepts positive and negative values.
         // If the field does not exist, $inc creates the field and sets the field to the specified value
         const increaseOrDecrease = incrementOrDecrement === 'increment' ? 1 : -1;
+        const cart = await this.findCart(userId);
+        const cartItem = cart.items.find(item => item.productId === productId);
+
+        if (cartItem.quantity === 0 && increaseOrDecrease !== 1) {
+          // Dont decrement when quantity equals 0
+          return resolve(cart);
+        }
+
         const result = await cartsCollection.findOneAndUpdate({
           owner: userId,
           'items.productId': productId,
           'items.quantity': {
-            $gt: 0
+            $gte: 0
           }
         }, {
           $inc: {

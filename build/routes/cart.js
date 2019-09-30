@@ -16,9 +16,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 /* eslint-disable linebreak-style */
 const router = _express.default.Router();
 
-router.post('/:productId', _Authentication.default.verifyToken, _Cart.default.addToCart);
-router.get('/', _Authentication.default.verifyToken, _Cart.default.getCart); // router.patch('/:productId/quantity', Authentication.verifyToken, CartController.updateQuantity);
-// router.delete('/:productId', Authentication.verifyToken, CartController.deleteItem);
+router.post('/:productId', _Authentication.default.verifyToken, _Cart.default.addOrDeductFromCart);
+router.get('/', _Authentication.default.verifyToken, _Cart.default.getCart);
+router.patch('/:productId/decrement', _Authentication.default.verifyToken, _Cart.default.addOrDeductFromCart); // router.delete('/:productId', Authentication.verifyToken, CartController.deleteItem);
 
 var _default = router;
 exports.default = _default;
