@@ -9,6 +9,7 @@ const password = Joi.string().min(6).max(20).required();
 const address = Joi.string().min(15).max(50).required();
 const phoneNumber = Joi.string().regex(/^[0]\d{10}$/).required();
 const productId = Joi.number().integer().required();
+const quantity = Joi.number().integer().min(1).required();
 
 class Validation {
   static signUpValidation(req, res, next) {
@@ -38,6 +39,16 @@ class Validation {
   static addOrDeductFromCart(req, res, next) {
     const schema = {
       productId,
+    };
+    const { error } = Joi.validate(req.params, schema);
+    if (error) return response(res, 400, error);
+    return next();
+  }
+
+  static updateProductByQuantity(req, res, next) {
+    const schema = {
+      productId,
+      quantity,
     };
     const { error } = Joi.validate(req.params, schema);
     if (error) return response(res, 400, error);

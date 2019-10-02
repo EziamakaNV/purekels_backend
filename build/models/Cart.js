@@ -9,8 +9,6 @@ var _index = _interopRequireDefault(require("../config/Db/index"));
 
 var _winston = _interopRequireDefault(require("../config/winston"));
 
-var _response = _interopRequireDefault(require("../response"));
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /* eslint-disable linebreak-style */
@@ -62,7 +60,7 @@ class CartModel {
         // The $inc operator accepts positive and negative values.
         // If the field does not exist, $inc creates the field and sets the field to the specified value
         const increaseOrDecrease = incrementOrDecrement === 'increment' ? 1 : -1;
-        const cart = await this.findCart(userId);
+        const cart = await CartModel.findCart(userId);
         const cartItem = cart.items.find(item => item.productId === productId);
         if (!cartItem && incrementOrDecrement === 'decrement') return resolve('Item does not exist in cart'); // If the cartItem is not found insert the product into the items array
         // https://docs.mongodb.com/manual/reference/operator/update/push/
@@ -135,18 +133,47 @@ class CartModel {
         return reject(new Error('Db Connection failed'));
       }
 
-      return cartsCollection.findOneAndUpdate({
-        owner: userId
-      }, {
-        $pull: {
-          items: {
-            productId
+      return CartModel.findCart(userId).then(cart => {
+        const cartItem = cart.items.find(item => item.productId === productId);
+        if (!cartItem) return reject(new Error('Item not in cart'));
+        return cartsCollection.findOneAndUpdate({
+          owner: userId
+        }, {
+          $pull: {
+            items: {
+              productId
+            }
           }
-        }
-      }, {
-        returnOriginal: false
-      }).then(doc => {
-        resolve(doc.value);
+        }, {
+          returnOriginal: false
+        }).then(doc => {
+          resolve(doc.value);
+        }).catch(err => reject(err));
+      }).catch(err => reject(err));
+    });
+  }
+
+  static updateByQuantity(userId, productId, quantity) {
+    return new Promise((resolve, reject) => {
+      if (cartsCollection === false) {
+        return reject(new Error('Db Connection failed'));
+      }
+
+      return CartModel.findCart(userId).then(cart => {
+        const cartItem = cart.items.find(item => item.productId === productId);
+        if (!cartItem) return reject(new Error('Item not in cart'));
+        return cartsCollection.findOneAndUpdate({
+          owner: userId,
+          'items.productId': productId
+        }, {
+          $set: {
+            'items.$.quantity': quantity
+          }
+        }, {
+          returnOriginal: false
+        }).then(doc => {
+          resolve(doc.value);
+        }).catch(err => reject(err));
       }).catch(err => reject(err));
     });
   }

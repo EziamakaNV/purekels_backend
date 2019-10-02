@@ -79,6 +79,24 @@ class CartController {
     }
   }
 
+  static async updateByQuantity(req, res) {
+    try {
+      const productId = Number(req.params.productId);
+      const quantity = Number(req.params.quantity); // Check for Cart;
+
+      const cart = await _Cart.default.findCart(req.user.id);
+
+      if (cart) {
+        const updatedCart = await _Cart.default.updateByQuantity(req.user.id, productId, quantity);
+        (0, _response.default)(res, 200, updatedCart);
+      } else {
+        (0, _response.default)(res, 400, 'A cart does not exist for the user');
+      }
+    } catch (error) {
+      (0, _response.default)(res, 500, error);
+    }
+  }
+
 }
 
 var _default = CartController;
