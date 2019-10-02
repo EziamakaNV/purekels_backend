@@ -45,6 +45,22 @@ class CartController {
       response(res, 500, error);
     }
   }
+
+  static async deleteFromCart(req, res) {
+    try {
+      const productId = Number(req.params.productId);
+      // Check for Cart;
+      const cart = await CartModel.findCart(req.user.id);
+      if (cart) {
+        const updatedCart = await CartModel.deleteProduct(req.user.id, productId);
+        response(res, 200, updatedCart);
+      } else {
+        response(res, 400, 'A cart does not exist for the user');
+      }
+    } catch (error) {
+      response(res, 500, error);
+    }
+  }
 }
 
 export default CartController;

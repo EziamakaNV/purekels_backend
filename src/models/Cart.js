@@ -3,7 +3,6 @@
 /* eslint-disable linebreak-style */
 import database from '../config/Db/index';
 import logger from '../config/winston';
-import response from '../response';
 
 const carts = process.env.NODE_ENV === 'production' ? 'carts' : 'testCarts';
 
@@ -58,8 +57,9 @@ class CartModel {
           );
           return resolve(updatedCart.value);
         }
-        if (cartItem.quantity === 0 && increaseOrDecrease !== 1) { // Dont decrement when quantity equals 0
-          return resolve(cart);
+        if (cartItem.quantity === 1 && increaseOrDecrease !== 1) { // Dont decrement when quantity equals 0
+          const updatedCart = await CartModel.deleteProduct(userId, productId);
+          resolve(updatedCart);
         }
         const result = await cartsCollection.findOneAndUpdate({ owner: userId, 'items.productId': productId },
           { $inc: { 'items.$.quantity': increaseOrDecrease } }, { returnOriginal: false });
@@ -91,6 +91,20 @@ class CartModel {
       } catch (error) {
         return reject(error);
       }
+    });
+  }
+
+  static deleteProduct(userId, productId) {
+    return new Promise((resolve, reject) => {
+      if (cartsCollection === false) {
+        return reject(new Error('Db Connection failed'));
+      }
+      return cartsCollection.findOneAndUpdate({ owner: userId }, { $pull: { items: { productId } } },
+        { returnOriginal: false })
+        .then((doc) => {
+          resolve(doc.value);
+        })
+        .catch(err => reject(err));
     });
   }
 }

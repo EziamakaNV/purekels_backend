@@ -83,9 +83,10 @@ class CartModel {
           return resolve(updatedCart.value);
         }
 
-        if (cartItem.quantity === 0 && increaseOrDecrease !== 1) {
+        if (cartItem.quantity === 1 && increaseOrDecrease !== 1) {
           // Dont decrement when quantity equals 0
-          return resolve(cart);
+          const updatedCart = await CartModel.deleteProduct(userId, productId);
+          resolve(updatedCart);
         }
 
         const result = await cartsCollection.findOneAndUpdate({
@@ -125,6 +126,28 @@ class CartModel {
       } catch (error) {
         return reject(error);
       }
+    });
+  }
+
+  static deleteProduct(userId, productId) {
+    return new Promise((resolve, reject) => {
+      if (cartsCollection === false) {
+        return reject(new Error('Db Connection failed'));
+      }
+
+      return cartsCollection.findOneAndUpdate({
+        owner: userId
+      }, {
+        $pull: {
+          items: {
+            productId
+          }
+        }
+      }, {
+        returnOriginal: false
+      }).then(doc => {
+        resolve(doc.value);
+      }).catch(err => reject(err));
     });
   }
 

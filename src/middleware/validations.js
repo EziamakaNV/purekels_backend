@@ -35,7 +35,7 @@ class Validation {
     return next();
   }
 
-  static addToCart(req, res, next) {
+  static addOrDeductFromCart(req, res, next) {
     const schema = {
       productId,
     };
