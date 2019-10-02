@@ -6,7 +6,7 @@ import mocha from 'mocha';
 import chai from 'chai';
 import chaiHttp from 'chai-http';
 import server from '../server';
-import database from '../models/Db/index';
+import database from '../config/Db/index';
 import logger from '../config/winston';
 
 chai.use(chaiHttp);

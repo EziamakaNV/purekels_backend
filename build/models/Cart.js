@@ -5,7 +5,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 
-var _index = _interopRequireDefault(require("./Db/index"));
+var _index = _interopRequireDefault(require("../config/Db/index"));
 
 var _winston = _interopRequireDefault(require("../config/winston"));
 
@@ -64,6 +64,24 @@ class CartModel {
         const increaseOrDecrease = incrementOrDecrement === 'increment' ? 1 : -1;
         const cart = await this.findCart(userId);
         const cartItem = cart.items.find(item => item.productId === productId);
+        if (!cartItem && incrementOrDecrement === 'decrement') return resolve('Item does not exist in cart'); // If the cartItem is not found insert the product into the items array
+        // https://docs.mongodb.com/manual/reference/operator/update/push/
+
+        if (!cartItem) {
+          const updatedCart = await cartsCollection.findOneAndUpdate({
+            owner: userId
+          }, {
+            $push: {
+              items: {
+                productId,
+                quantity: 1
+              }
+            }
+          }, {
+            returnOriginal: false
+          });
+          return resolve(updatedCart.value);
+        }
 
         if (cartItem.quantity === 0 && increaseOrDecrease !== 1) {
           // Dont decrement when quantity equals 0
@@ -72,10 +90,7 @@ class CartModel {
 
         const result = await cartsCollection.findOneAndUpdate({
           owner: userId,
-          'items.productId': productId,
-          'items.quantity': {
-            $gte: 0
-          }
+          'items.productId': productId
         }, {
           $inc: {
             'items.$.quantity': increaseOrDecrease

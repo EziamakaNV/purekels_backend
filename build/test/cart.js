@@ -10,7 +10,7 @@ var _dotenv = _interopRequireDefault(require("dotenv"));
 
 var _server = _interopRequireDefault(require("../server"));
 
-var _index = _interopRequireDefault(require("../models/Db/index"));
+var _index = _interopRequireDefault(require("../config/Db/index"));
 
 var _winston = _interopRequireDefault(require("../config/winston"));
 

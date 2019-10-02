@@ -5,8 +5,6 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 
-var _Validation = _interopRequireDefault(require("../validations/Validation"));
-
 var _response = _interopRequireDefault(require("../response"));
 
 var _Cart = _interopRequireDefault(require("../models/Cart"));
@@ -24,32 +22,21 @@ class CartController {
     // if the product is in the cart increment the quantity by 1,
     // if the product is not in the cart, add the item and increment by one;
     try {
-      const productId = Number(req.params.productId);
+      const productId = Number(req.params.productId); // Check for Cart;
 
-      const {
-        error
-      } = _Validation.default.addToCart({
-        productId
-      });
+      const cart = await _Cart.default.findCart(req.user.id);
 
-      if (error) {
-        (0, _response.default)(res, 401, error);
+      if (cart) {
+        // Increment the product
+        // If the product is not there it creates the files and sets it to 1
+        console.log(req.path);
+        const addOrReduce = /decrement/i.test(req.path) ? 'decrement' : 'increment';
+        const updatedCart = await _Cart.default.incrementOrDecrementProduct(req.user.id, productId, addOrReduce);
+        (0, _response.default)(res, 200, updatedCart);
       } else {
-        // Check for Cart;
-        const cart = await _Cart.default.findCart(req.user.id);
-
-        if (cart) {
-          // Increment the product
-          // If the product is not there it creates the files and sets it to 1
-          console.log(req.path);
-          const addOrReduce = /decrement/i.test(req.path) ? 'decrement' : 'increment';
-          const updatedCart = await _Cart.default.incrementOrDecrementProduct(req.user.id, productId, addOrReduce);
-          (0, _response.default)(res, 200, updatedCart);
-        } else {
-          // Insert or create new cart and add the product setting the value to one
-          const newCart = await _Cart.default.createCart(req.user.id, productId);
-          (0, _response.default)(res, 200, newCart);
-        }
+        // Insert or create new cart and add the product setting the value to one
+        const newCart = await _Cart.default.createCart(req.user.id, productId);
+        (0, _response.default)(res, 200, newCart);
       }
     } catch (error) {
       (0, _response.default)(res, 500, error);
