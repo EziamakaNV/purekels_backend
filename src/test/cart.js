@@ -124,7 +124,7 @@ describe('POST /api/v1/cart/:productId', function () {
   describe('When the user is logged in', function () {
     it('Should return a status of 200 and data property in the body', function (done) {
       chai.request(server)
-        .post('/api/v1/cart/1')
+        .post('/api/v1/cart/111111111111')
         .set('Cookie', token)
         .end(function (err, res) {
           // eslint-disable-next-line no-unused-expressions
@@ -135,8 +135,8 @@ describe('POST /api/v1/cart/:productId', function () {
           expect(res.body.status).to.equal(200);
           expect(res.body).to.haveOwnProperty('data');
           expect(res.body.data).to.be.a('object');
-          const cartItem = res.body.data.items.find(item => item.productId === 1);
-          expect(cartItem.productId).to.equal(1);
+          const cartItem = res.body.data.items.find(item => item.productId === 111111111111);
+          expect(cartItem.productId).to.equal(111111111111);
           done();
         });
     });

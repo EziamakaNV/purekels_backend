@@ -1,17 +1,17 @@
 /* eslint-disable linebreak-style */
 import express from 'express';
 import Authentication from '../Authentication';
-import CartController from '../controllers/Product';
+import ProductController from '../controllers/Product';
 import Validation from '../middleware/validations';
 
 const router = express.Router();
 
-router.post('/', Authentication.verifyToken, Validation.createProduct, CartController.createProduct);
+router.post('/', Authentication.verifyToken, Validation.createProduct, ProductController.createProduct);
 
 
-// router.get('/', Authentication.verifyToken, CartController.getCart);
+router.get('/', Authentication.verifyToken, ProductController.getAllProducts);
 
-// router.patch('/:productId/decrement', Authentication.verifyToken, Validation.addOrDeductFromCart, CartController.addOrDeductFromCart);
+router.patch('/:productId/price', Authentication.verifyToken, Validation.updateProductPrice, ProductController.updatePrice);
 
 // router.delete('/:productId', Authentication.verifyToken, Validation.addOrDeductFromCart, CartController.deleteFromCart);
 

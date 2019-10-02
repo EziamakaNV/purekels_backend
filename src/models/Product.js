@@ -25,7 +25,7 @@ class ProductModel {
         return reject(new Error('Db Connection failed'));
       }
       const findBy = nameOrId === 'name' ? 'name' : '_id';
-      const where = findBy === 'id' ? new ObjectID(payLoad) : payLoad;
+      const where = findBy === '_id' ? new ObjectID(payLoad) : payLoad;
       productsCollection.findOne({ [findBy]: where })
         .then(product => resolve(product))
         .catch(err => reject(err));
@@ -39,6 +39,31 @@ class ProductModel {
       }
       return productsCollection.insertOne({ name, price, imageUrl: imageUrl || '' })
         .then(result => resolve(result.ops[0]))
+        .catch(err => reject(err));
+    });
+  }
+
+  static getAll() {
+    return new Promise((resolve, reject) => {
+      if (productsCollection === false) {
+        return reject(new Error('Db Connection failed'));
+      }
+      return productsCollection.find({})
+        .toArray((err, docs) => {
+          if (err) return reject(err);
+          return resolve(docs);
+        });
+    });
+  }
+
+  static updatePrice(productId, price) {
+    return new Promise((resolve, reject) => {
+      if (productsCollection === false) {
+        return reject(new Error('Db Connection failed'));
+      }
+      return productsCollection.findOneAndUpdate({ _id: new ObjectID(productId) },
+        { $set: { price } }, { returnOriginal: false })
+        .then(doc => resolve(doc.value))
         .catch(err => reject(err));
     });
   }

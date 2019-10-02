@@ -24,7 +24,7 @@ const address = _joi.default.string().min(15).max(50).required();
 
 const phoneNumber = _joi.default.string().regex(/^[0]\d{10}$/).required();
 
-const productId = _joi.default.number().integer().required();
+const productId = _joi.default.string().min(12).required();
 
 const quantity = _joi.default.number().integer().min(1).required();
 
@@ -105,6 +105,23 @@ class Validation {
     const {
       error
     } = _joi.default.validate(req.body, schema);
+
+    if (error) return (0, _response.default)(res, 400, error);
+    return next();
+  }
+
+  static updateProductPrice(req, res, next) {
+    const schema = {
+      productId,
+      price
+    };
+
+    const {
+      error
+    } = _joi.default.validate({
+      price: req.body.price,
+      productId: req.params.productId
+    }, schema);
 
     if (error) return (0, _response.default)(res, 400, error);
     return next();
