@@ -1,7 +1,7 @@
 /* eslint-disable linebreak-style */
 /* eslint-disable no-console */
 /* eslint-disable linebreak-style */
-import database from './Db/index';
+import database from '../config/Db/index';
 import logger from '../config/winston';
 
 const users = process.env.NODE_ENV === 'production' ? 'users' : 'testUsers';

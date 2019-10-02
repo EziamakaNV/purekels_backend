@@ -7,7 +7,7 @@ import chai from 'chai';
 import chaiHttp from 'chai-http';
 import dotenv from 'dotenv';
 import server from '../server';
-import database from '../models/Db/index';
+import database from '../config/Db/index';
 import logger from '../config/winston';
 
 dotenv.config();

@@ -5,9 +5,11 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 
-var _index = _interopRequireDefault(require("./Db/index"));
+var _index = _interopRequireDefault(require("../config/Db/index"));
 
 var _winston = _interopRequireDefault(require("../config/winston"));
+
+var _response = _interopRequireDefault(require("../response"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -60,12 +62,35 @@ class CartModel {
         // The $inc operator accepts positive and negative values.
         // If the field does not exist, $inc creates the field and sets the field to the specified value
         const increaseOrDecrease = incrementOrDecrement === 'increment' ? 1 : -1;
+        const cart = await this.findCart(userId);
+        const cartItem = cart.items.find(item => item.productId === productId);
+        if (!cartItem && incrementOrDecrement === 'decrement') return resolve('Item does not exist in cart'); // If the cartItem is not found insert the product into the items array
+        // https://docs.mongodb.com/manual/reference/operator/update/push/
+
+        if (!cartItem) {
+          const updatedCart = await cartsCollection.findOneAndUpdate({
+            owner: userId
+          }, {
+            $push: {
+              items: {
+                productId,
+                quantity: 1
+              }
+            }
+          }, {
+            returnOriginal: false
+          });
+          return resolve(updatedCart.value);
+        }
+
+        if (cartItem.quantity === 0 && increaseOrDecrease !== 1) {
+          // Dont decrement when quantity equals 0
+          return resolve(cart);
+        }
+
         const result = await cartsCollection.findOneAndUpdate({
           owner: userId,
-          'items.productId': productId,
-          'items.quantity': {
-            $gt: 0
-          }
+          'items.productId': productId
         }, {
           $inc: {
             'items.$.quantity': increaseOrDecrease

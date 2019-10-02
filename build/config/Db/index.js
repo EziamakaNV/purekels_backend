@@ -37,19 +37,6 @@ var _default = new Promise((resolve, reject) => {
     dbEmitter.emit('error', new Error(err));
     reject(err);
   });
-}); // async (resolve, reject) => {
-//   const client = await MongoClient.connect(process.env.DATABASE_URI, { poolSize: 5, useNewUrlParser: true })
-//     .catch((err) => {
-//       dbEmitter.emit('error', new Error(err));
-//       reject(err);
-//     });
-//   if (client) {
-//     if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'development') {
-//       dbEmitter.emit('db_connected');
-//     }
-//     return resolve(client.db());
-//   }
-// }
-
+});
 
 exports.default = _default;

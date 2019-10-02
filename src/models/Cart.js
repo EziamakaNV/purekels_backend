@@ -1,7 +1,7 @@
 /* eslint-disable linebreak-style */
 /* eslint-disable no-console */
 /* eslint-disable linebreak-style */
-import database from './Db/index';
+import database from '../config/Db/index';
 import logger from '../config/winston';
 import response from '../response';
 
@@ -44,10 +44,24 @@ class CartModel {
         const increaseOrDecrease = (incrementOrDecrement === 'increment') ? 1 : -1;
         const cart = await this.findCart(userId);
         const cartItem = cart.items.find(item => item.productId === productId);
+        if (!cartItem && incrementOrDecrement === 'decrement') return resolve('Item does not exist in cart');
+        // If the cartItem is not found insert the product into the items array
+        // https://docs.mongodb.com/manual/reference/operator/update/push/
+        if (!cartItem) {
+          const updatedCart = await cartsCollection.findOneAndUpdate(
+            { owner: userId },
+            {
+              $push:
+              { items: { productId, quantity: 1 } },
+            },
+            { returnOriginal: false },
+          );
+          return resolve(updatedCart.value);
+        }
         if (cartItem.quantity === 0 && increaseOrDecrease !== 1) { // Dont decrement when quantity equals 0
           return resolve(cart);
         }
-        const result = await cartsCollection.findOneAndUpdate({ owner: userId, 'items.productId': productId, 'items.quantity': { $gte: 0 } },
+        const result = await cartsCollection.findOneAndUpdate({ owner: userId, 'items.productId': productId },
           { $inc: { 'items.$.quantity': increaseOrDecrease } }, { returnOriginal: false });
         return resolve(result.value);
       } catch (error) {
