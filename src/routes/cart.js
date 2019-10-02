@@ -15,4 +15,6 @@ router.patch('/:productId/decrement', Authentication.verifyToken, Validation.add
 
 router.delete('/:productId', Authentication.verifyToken, Validation.addOrDeductFromCart, CartController.deleteFromCart);
 
+router.patch('/:productId/quantity/:quantity', Authentication.verifyToken, Validation.updateProductByQuantity, CartController.updateByQuantity);
+
 export default router;

@@ -26,6 +26,8 @@ const phoneNumber = _joi.default.string().regex(/^[0]\d{10}$/).required();
 
 const productId = _joi.default.number().integer().required();
 
+const quantity = _joi.default.number().integer().min(1).required();
+
 class Validation {
   static signUpValidation(req, res, next) {
     const schema = {
@@ -62,6 +64,20 @@ class Validation {
   static addOrDeductFromCart(req, res, next) {
     const schema = {
       productId
+    };
+
+    const {
+      error
+    } = _joi.default.validate(req.params, schema);
+
+    if (error) return (0, _response.default)(res, 400, error);
+    return next();
+  }
+
+  static updateProductByQuantity(req, res, next) {
+    const schema = {
+      productId,
+      quantity
     };
 
     const {

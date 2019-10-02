@@ -47,4 +47,7 @@ orders
 2/10/2019
 - Test for deleting a cart item: if there is no cart present the operation cant go through. If the cart exists
 check if the product exists before handling the operation.
+- Users should be able update the quantity of an item in the cart by providing the number. Write tests for this.
+The minimum number allowed should be one (1);
+- If the db returns null refresh the cart (for the front end)
 
