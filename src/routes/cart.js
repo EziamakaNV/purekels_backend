@@ -8,6 +8,7 @@ const router = express.Router();
 
 router.post('/:productId', Authentication.verifyToken, Validation.addOrDeductFromCart, CartController.addOrDeductFromCart);
 
+
 router.get('/', Authentication.verifyToken, CartController.getCart);
 
 router.patch('/:productId/decrement', Authentication.verifyToken, Validation.addOrDeductFromCart, CartController.addOrDeductFromCart);

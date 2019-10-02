@@ -22,5 +22,6 @@ router.post('/:productId', _Authentication.default.verifyToken, _validations.def
 router.get('/', _Authentication.default.verifyToken, _Cart.default.getCart);
 router.patch('/:productId/decrement', _Authentication.default.verifyToken, _validations.default.addOrDeductFromCart, _Cart.default.addOrDeductFromCart);
 router.delete('/:productId', _Authentication.default.verifyToken, _validations.default.addOrDeductFromCart, _Cart.default.deleteFromCart);
+
 var _default = router;
 exports.default = _default;

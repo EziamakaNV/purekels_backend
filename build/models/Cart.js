@@ -9,6 +9,8 @@ var _index = _interopRequireDefault(require("../config/Db/index"));
 
 var _winston = _interopRequireDefault(require("../config/winston"));
 
+var _response = _interopRequireDefault(require("../response"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /* eslint-disable linebreak-style */
