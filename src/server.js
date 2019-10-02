@@ -7,6 +7,7 @@ import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
 import userRoute from './routes/user';
 import cartRoute from './routes/cart';
+import productRoute from './routes/product';
 import { dbEmitter } from './config/Db/index';
 import winston from './config/winston';
 
@@ -25,6 +26,7 @@ app.use(express.static('public'));
 
 app.use('/api/v1/auth', userRoute);
 app.use('/api/v1/cart', cartRoute);
+app.use('/api/v1/product', productRoute);
 // Not Found Handler
 app.use((req, res) => { res.status(404).send('Not Found!'); });
 

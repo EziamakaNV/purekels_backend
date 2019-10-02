@@ -28,6 +28,13 @@ const productId = _joi.default.number().integer().required();
 
 const quantity = _joi.default.number().integer().min(1).required();
 
+const productName = _joi.default.string().min(3).max(100).required();
+
+const price = _joi.default.number().integer().min(100).required(); // Price in kobo. 100kobo is 1 naira.
+
+
+const imageUrl = _joi.default.string().min(3);
+
 class Validation {
   static signUpValidation(req, res, next) {
     const schema = {
@@ -83,6 +90,21 @@ class Validation {
     const {
       error
     } = _joi.default.validate(req.params, schema);
+
+    if (error) return (0, _response.default)(res, 400, error);
+    return next();
+  }
+
+  static createProduct(req, res, next) {
+    const schema = {
+      productName,
+      price,
+      imageUrl
+    };
+
+    const {
+      error
+    } = _joi.default.validate(req.body, schema);
 
     if (error) return (0, _response.default)(res, 400, error);
     return next();

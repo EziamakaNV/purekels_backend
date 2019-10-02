@@ -17,6 +17,8 @@ var _user = _interopRequireDefault(require("./routes/user"));
 
 var _cart = _interopRequireDefault(require("./routes/cart"));
 
+var _product = _interopRequireDefault(require("./routes/product"));
+
 var _index = require("./config/Db/index");
 
 var _winston = _interopRequireDefault(require("./config/winston"));
@@ -43,7 +45,8 @@ app.use((0, _morgan.default)('combined', {
 }));
 app.use(_express.default.static('public'));
 app.use('/api/v1/auth', _user.default);
-app.use('/api/v1/cart', _cart.default); // Not Found Handler
+app.use('/api/v1/cart', _cart.default);
+app.use('/api/v1/product', _product.default); // Not Found Handler
 
 app.use((req, res) => {
   res.status(404).send('Not Found!');
