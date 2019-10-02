@@ -1,5 +1,4 @@
 /* eslint-disable linebreak-style */
-import Validation from '../validations/Validation';
 import response from '../response';
 import CartModel from '../models/Cart';
 import logger from '../config/winston';
@@ -13,25 +12,19 @@ class CartController {
     // if the product is not in the cart, add the item and increment by one;
     try {
       const productId = Number(req.params.productId);
-      const { error } = Validation.addToCart({ productId });
-
-      if (error) {
-        response(res, 401, error);
+      // Check for Cart;
+      const cart = await CartModel.findCart(req.user.id);
+      if (cart) {
+        // Increment the product
+        // If the product is not there it creates the files and sets it to 1
+        console.log(req.path);
+        const addOrReduce = /decrement/i.test(req.path) ? 'decrement' : 'increment';
+        const updatedCart = await CartModel.incrementOrDecrementProduct(req.user.id, productId, addOrReduce);
+        response(res, 200, updatedCart);
       } else {
-        // Check for Cart;
-        const cart = await CartModel.findCart(req.user.id);
-        if (cart) {
-          // Increment the product
-          // If the product is not there it creates the files and sets it to 1
-          console.log(req.path);
-          const addOrReduce = /decrement/i.test(req.path) ? 'decrement' : 'increment';
-          const updatedCart = await CartModel.incrementOrDecrementProduct(req.user.id, productId, addOrReduce);
-          response(res, 200, updatedCart);
-        } else {
-          // Insert or create new cart and add the product setting the value to one
-          const newCart = await CartModel.createCart(req.user.id, productId);
-          response(res, 200, newCart);
-        }
+        // Insert or create new cart and add the product setting the value to one
+        const newCart = await CartModel.createCart(req.user.id, productId);
+        response(res, 200, newCart);
       }
     } catch (error) {
       response(res, 500, error);
@@ -49,6 +42,22 @@ class CartController {
       }
     } catch (error) {
       logger.error(error);
+      response(res, 500, error);
+    }
+  }
+
+  static async deleteFromCart(req, res) {
+    try {
+      const productId = Number(req.params.productId);
+      // Check for Cart;
+      const cart = await CartModel.findCart(req.user.id);
+      if (cart) {
+        const updatedCart = await CartModel.deleteProduct(req.user.id, productId);
+        response(res, 200, updatedCart);
+      } else {
+        response(res, 400, 'A cart does not exist for the user');
+      }
+    } catch (error) {
       response(res, 500, error);
     }
   }

@@ -7,7 +7,7 @@ import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
 import userRoute from './routes/user';
 import cartRoute from './routes/cart';
-import { dbEmitter } from './models/Db/index';
+import { dbEmitter } from './config/Db/index';
 import winston from './config/winston';
 
 require('dotenv').config();

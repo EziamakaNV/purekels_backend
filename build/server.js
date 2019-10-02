@@ -17,7 +17,7 @@ var _user = _interopRequireDefault(require("./routes/user"));
 
 var _cart = _interopRequireDefault(require("./routes/cart"));
 
-var _index = require("./models/Db/index");
+var _index = require("./config/Db/index");
 
 var _winston = _interopRequireDefault(require("./config/winston"));
 

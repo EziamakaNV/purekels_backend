@@ -9,7 +9,7 @@ require("core-js/modules/es6.symbol");
 
 require("core-js/modules/web.dom.iterable");
 
-var _index = _interopRequireDefault(require("./Db/index"));
+var _index = _interopRequireDefault(require("../config/Db/index"));
 
 var _winston = _interopRequireDefault(require("../config/winston"));
 

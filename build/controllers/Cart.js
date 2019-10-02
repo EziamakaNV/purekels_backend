@@ -5,8 +5,6 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 
-var _Validation = _interopRequireDefault(require("../validations/Validation"));
-
 var _response = _interopRequireDefault(require("../response"));
 
 var _Cart = _interopRequireDefault(require("../models/Cart"));
@@ -17,36 +15,28 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /* eslint-disable linebreak-style */
 class CartController {
-  static async addToCart(req, res) {
+  static async addOrDeductFromCart(req, res) {
+    // Check if the product exists
     // Check if the user has a cart
     // if true, check if the roduct is already in the cart
     // if the product is in the cart increment the quantity by 1,
     // if the product is not in the cart, add the item and increment by one;
     try {
-      const productId = Number(req.params.productId);
+      const productId = Number(req.params.productId); // Check for Cart;
 
-      const {
-        error
-      } = _Validation.default.addToCart({
-        productId
-      });
+      const cart = await _Cart.default.findCart(req.user.id);
 
-      if (error) {
-        (0, _response.default)(res, 401, error);
+      if (cart) {
+        // Increment the product
+        // If the product is not there it creates the files and sets it to 1
+        console.log(req.path);
+        const addOrReduce = /decrement/i.test(req.path) ? 'decrement' : 'increment';
+        const updatedCart = await _Cart.default.incrementOrDecrementProduct(req.user.id, productId, addOrReduce);
+        (0, _response.default)(res, 200, updatedCart);
       } else {
-        // Check for Cart;
-        const cart = await _Cart.default.findCart(req.user.id);
-
-        if (cart) {
-          // Increment the product
-          // If the product is not there it creates the files and sets it to 1
-          const updatedCart = await _Cart.default.incrementOrDecrementProduct(req.user.id, productId, 'increment');
-          (0, _response.default)(res, 200, updatedCart);
-        } else {
-          // Insert or create new cart and add the product setting the value to one
-          const newCart = await _Cart.default.createCart(req.user.id, productId);
-          (0, _response.default)(res, 200, newCart);
-        }
+        // Insert or create new cart and add the product setting the value to one
+        const newCart = await _Cart.default.createCart(req.user.id, productId);
+        (0, _response.default)(res, 200, newCart);
       }
     } catch (error) {
       (0, _response.default)(res, 500, error);
@@ -68,6 +58,23 @@ class CartController {
     } catch (error) {
       _winston.default.error(error);
 
+      (0, _response.default)(res, 500, error);
+    }
+  }
+
+  static async deleteFromCart(req, res) {
+    try {
+      const productId = Number(req.params.productId); // Check for Cart;
+
+      const cart = await _Cart.default.findCart(req.user.id);
+
+      if (cart) {
+        const updatedCart = await _Cart.default.deleteProduct(req.user.id, productId);
+        (0, _response.default)(res, 200, updatedCart);
+      } else {
+        (0, _response.default)(res, 400, 'A cart does not exist for the user');
+      }
+    } catch (error) {
       (0, _response.default)(res, 500, error);
     }
   }

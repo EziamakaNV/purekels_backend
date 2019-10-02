@@ -37,3 +37,13 @@ orders
     deliveryInstructions,
 
 }
+
+
+29/9/19
+- Write test for adding more than one item to the cart
+- Should not be able to decrement an item that is not present
+- cart schema in mongodb http://mongodb.github.io/node-mongodb-native/schema/chapter10/
+
+2/10/2019
+- Test for deleting a cart item: if there is no cart present the operation cant go through. If the cart exists
+check if the product exists before handling the operation.
