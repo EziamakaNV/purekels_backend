@@ -8,8 +8,11 @@ const email = Joi.string().email().required();
 const password = Joi.string().min(6).max(20).required();
 const address = Joi.string().min(15).max(50).required();
 const phoneNumber = Joi.string().regex(/^[0]\d{10}$/).required();
-const productId = Joi.number().integer().required();
+const productId = Joi.string().min(12).required();
 const quantity = Joi.number().integer().min(1).required();
+const productName = Joi.string().min(3).max(100).required();
+const price = Joi.number().integer().min(100).required(); // Price in kobo. 100kobo is 1 naira.
+const imageUrl = Joi.string().min(3);
 
 class Validation {
   static signUpValidation(req, res, next) {
@@ -51,6 +54,29 @@ class Validation {
       quantity,
     };
     const { error } = Joi.validate(req.params, schema);
+    if (error) return response(res, 400, error);
+    return next();
+  }
+
+  static createProduct(req, res, next) {
+    const schema = {
+      productName,
+      price,
+      imageUrl,
+    };
+
+    const { error } = Joi.validate(req.body, schema);
+    if (error) return response(res, 400, error);
+    return next();
+  }
+
+  static updateProductPrice(req, res, next) {
+    const schema = {
+      productId,
+      price,
+    };
+
+    const { error } = Joi.validate({ price: req.body.price, productId: req.params.productId }, schema);
     if (error) return response(res, 400, error);
     return next();
   }
